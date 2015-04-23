@@ -1,5 +1,7 @@
 from paver import easy
-from _pave import cache_get,cache_set
+from paver.easy import sh
+from functools import partial
+import json
 try:
     from redis import Redis
 except ImportError:
@@ -21,13 +23,15 @@ SET_ARG = dict(ex=7200)
 cache_set = lambda key,val: cache.set(key,val,**SET_ARG)
 cache_get = lambda key: cache.get(key)
 
+_git = lambda *cmds: sh(['git'] + list(cmds))
+
 def commit_repo(msg='xxx'):
-    sh(['git','commit','--allow-empty'])
+    _git('commit','--allow-empty')
 
 def _push(remote,branch=None):
     if branch is None:
         branch = 'master'
-    sh(['git','push',remote,branch])
+    _git('push',remote,branch)
 
 @easy.task
 @easy.cmdopts([
@@ -72,13 +76,13 @@ def work_on(options,branch=None):
         branch = options.work_on.branch
     cache_set('PAVER:GIT:BRANCH',branch)
     easy.info('Switching to branch {}'.format(branch))
-    sh('git checkout -b {}'.format(branch))
+    _git('checkout','-b','{}'.format(branch))
 
 def finish(branch=None):
     if branch is not None:
-        sh('git checkout master')
-        sh('git merge {}'.format(branch))
-        sh('git branch -d {}'.format(branch))
+        _git('checkout','master')
+        _git('merge','{}'.format(branch))
+        _git('branch','-d','{}'.format(branch))
         increment_version()
 
 @easy.task
