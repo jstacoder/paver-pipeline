@@ -110,16 +110,35 @@ def version():
     easy.info(get_version())
 
 @easy.task
-def increment_version():
+@easy.cmdopts([
+    ('minor','m','minor version update'),
+    ('mid','i','increment the mid version number'),
+    ('major','a','increment major version number'),
+])
+def increment_version(options):
     '''
         increment local version
     '''
+    ver = 'minor' if not bool(options.increment_version) else options.increment_version.keys()[0]
     version = get_version()
     l,m,s = map(int,version.split('.'))
-    if s == 9:
+    if ver == 'minor':
+        if s == 9:
+            s = 0
+            if m == 9:
+                m = 0
+                if str(l).endswith == '9':
+                    l = (int(l[0]) + 1) + 0
+                else:
+                    l += 1
+            else:
+                m += 1
+        else:
+            s += 1
+    elif ver == 'mid':
         s = 0
         if m == 9:
-            m = 0
+            m == 0
             if str(l).endswith == '9':
                 l = (int(l[0]) + 1) + 0
             else:
@@ -127,7 +146,12 @@ def increment_version():
         else:
             m += 1
     else:
-        s += 1
+        s = 0
+        m = 0
+        if str(l).endswith == '9':
+            l = (int(l[0]) + 1) + 0
+        else:
+            l += 1        
     set_version('.'.join(map(str,[l,m,s])))
 
 @easy.task
