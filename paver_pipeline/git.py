@@ -1,4 +1,5 @@
 from paver import easy
+import os
 from paver.easy import sh
 from functools import partial
 import json
@@ -25,8 +26,8 @@ cache_get = lambda key: cache.get(key)
 
 _git = lambda *cmds: sh(['git'] + list(cmds))
 
-def commit_repo(msg='xxx'):
-    _git('commit','--allow-empty')
+def commit_repo(msg=''):
+    _git('commit','--allow-empty','-m',msg)
 
 def _push(remote,branch=None):
     if branch is None:
@@ -34,27 +35,27 @@ def _push(remote,branch=None):
     _git('push',remote,branch)
 
 @easy.task
-@easy.cmdopts([
-    ('msg=','m','commit message')], 
-    share_with=['push_heroku','deploy']
-)
 def push_github(options):
+    '''
+        push repo to github
+    '''
     _push('github')
 
 @easy.task
-@easy.cmdopts([
-    ('msg=','m','commit message')],    
-    share_with=['push_github','deploy']
-)
 def push_heroku(options):
+    '''
+        push repo to heroku 
+    '''
     _push('heroku')
 
 @easy.task
 @easy.cmdopts([
-    ('msg=','m','commit message')],    
-    share_with=['push_heroku','push_github']
-)
+    ('msg=','m','commit message')
+])
 def deploy():
+    '''
+        commit current state and push to github and heroku
+    '''
     commit_repo(options.deploy.msg)
     push_github()
     push_heroku()
@@ -72,6 +73,9 @@ def set_version(version):
     ('branch=','b','a new branch to create to work on')],
     share_with=['done'])
 def work_on(options,branch=None):
+    '''
+        create a new working branch and switch to it
+    '''
     if branch is None:
         branch = options.work_on.branch
     cache_set('PAVER:GIT:BRANCH',branch)
@@ -91,16 +95,25 @@ def finish(branch=None):
     ,share_with=['work_on']
 )
 def done(options,branch=None):
+    '''
+        merge current branch with master, delete working branch and increment project version
+    '''
     if branch is None:
         branch = cache_get('PAVER:GIT:BRANCH') or options.done.branch 
     finish(branch)
 
 @easy.task
 def version():
+    '''
+        show local version info
+    '''
     easy.info(get_version())
 
 @easy.task
 def increment_version():
+    '''
+        increment local version
+    '''
     version = get_version()
     l,m,s = map(int,version.split('.'))
     if s == 9:
@@ -116,3 +129,16 @@ def increment_version():
     else:
         s += 1
     set_version('.'.join(map(str,[l,m,s])))
+
+@easy.task
+@easy.cmdopts([
+    ('filename=','f','file to add')    
+])
+def commit_last_file(options):
+    '''
+        add last working file to git repo,commit
+    '''
+    print options.commit_last_file
+    _git('add',options.commit_last_file.filename)
+    _git('commit','-m','added work')
+    _git('push','github','master')
