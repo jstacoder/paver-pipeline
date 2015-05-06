@@ -11,6 +11,6 @@ setup(
         'jsmin',
         'ugliPyJs',
         'PyExecjs',
-        'coffeescript'.
+        'coffeescript',
     ]
 )
