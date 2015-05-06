@@ -1,5 +1,6 @@
 import json
 import os
+from .pyng import ng_annotate as ng
 from paver import easy,options
 from paver.easy import path,sh
 from paver.options import Bunch  
@@ -98,6 +99,17 @@ def coffee():
         return None
     options.assets.js_files = map(lambda x: ((x[0],compile_coffee(x[1],True))),options.assets.js_files)    
         
+
+@easy.task
+def ng_annotate():
+    '''
+        run code through ng-annotate compiler
+    '''
+    if ng is None:
+        easy.info('ng-annotate and pyng-annotate required for this task')
+        return None
+    options.assets.js_files = map(lambda x: ((x[0],ng(x[1]))),options.assets.js_files)
+
 @easy.task
 def write_js(buildtype=None):
     '''
@@ -163,6 +175,31 @@ def build_dev():
     coffee()
     concat()
     write_js()
+
+@easy.task
+def build_dev_ng():
+    '''
+        Partial Build w/ng-annotate: gather js or coffeescript, compile coffeescript, ng-annotate, concat, write out
+    '''
+    get_js()
+    coffee()
+    ng_annotate()
+    concat()
+    write_js()
+    
+@easy.task
+def build_production_ng():    
+    '''
+        Full Build w/ng-annotate: gather js or coffeescript, compile coffeescript, ng-annotate, uglify, minify, concat, write out
+    '''
+    get_js()
+    coffee()
+    ng_annotate()
+    uglifyjs()
+    minify()
+    concat()
+    write_js()
+
     
 @easy.task
 @easy.cmdopts([
