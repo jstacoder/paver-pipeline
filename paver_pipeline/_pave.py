@@ -60,6 +60,10 @@ def _get_buildtype():
     return options.build.buildtype or os.environ.get('BUILD_TYPE')                                            
 
 @easy.task
+def upload():
+    easy.sh('python setup.py sdist upload')
+
+@easy.task
 def get_js():
     '''
         gather all source js files, or some other precompiled source files
