@@ -2,6 +2,8 @@
 
 ###Tools to make projects easier
 
+for insight into my thoughts while writing this, checkout the (blog post)[https://www.codementor.io/python/tutorial/creating-an-asset-pipeline-in-python-with-paver] i wrote while doing it
+
 
 _includes_:
 *   `paver_pipeline.git` - helpers for managing your git repos
