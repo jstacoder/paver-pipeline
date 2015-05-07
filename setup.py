@@ -5,6 +5,9 @@ setup(
     packages=['paver_pipeline'],
     version='0.0.4',
     author='kyle roux',
+    description=('Asset pipeline / builder, similar to '
+                 'Grunt, or Gulp, but built with paver and python'),
+    url='https://github.com/jstacoder/paver-pipeline',
     author_email='kyle@level2designs.com',
     install_requires=[
         'PyNg-Annotate',        
