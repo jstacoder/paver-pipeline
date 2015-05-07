@@ -34,6 +34,15 @@ def _push(remote,branch=None):
         branch = 'master'
     _git('push',remote,branch)
 
+
+@easy.task
+@easy.cmdopts([
+    ('dir=','d','directory to add')       
+])
+def add_all(options):
+    print options
+    _git('add','-A','-v')
+
 @easy.task
 def push_github(options):
     '''

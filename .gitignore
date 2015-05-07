@@ -1,1 +1,8 @@
 venv/*
+dist/*
+*.pyc
+node_modules/*
+paver_pipeline.egg*
+tst*
+test*
+
