@@ -1,4 +1,4 @@
-##Paver-Pipeline : <small>v0.0.3</small>
+##Paver-Pipeline : <small>v0.0.6</small>
 
 ###Tools to make projects easier
 
