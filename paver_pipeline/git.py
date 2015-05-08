@@ -17,6 +17,11 @@ except ImportError:
             self.cache[key] = val
             return True
       
+
+README_HEADER = '##Paver-Pipeline : <small>v{version}</small>'
+set_header = lambda ver: README_HEADER.format(version=ver)
+
+
 cache = Redis() if Redis is not None else Cache()
 
 SET_ARG = dict(ex=7200)
@@ -69,6 +74,14 @@ def deploy():
     push_github()
     push_heroku()
 
+
+def fix_readme(version):
+    readme_lines = open('README.md','r').readlines()[1:]
+    with open('README.md','w') as readme:
+        readme.writelines(
+            [set_header(version)] + readme_lines
+        )
+
 def get_version():
     return json.loads(open('version.json','r').read()).get('version')
 
@@ -76,6 +89,7 @@ def set_version(version):
     print 'setting version to {}'.format(version)
     with open('version.json','w') as f:
         f.write(json.dumps(dict(version=version)))
+    fix_readme(version)
 
 @easy.task
 @easy.cmdopts([

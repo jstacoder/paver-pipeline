@@ -1,7 +1,4 @@
-##Paver-Pipeline : <small>v0.0.6</small>
-
-###Tools to make projects easier
-
+##Paver-Pipeline : <small>v0.0.8</small>
 for insight into my thoughts while writing this, checkout the [blog post](https://www.codementor.io/python/tutorial/creating-an-asset-pipeline-in-python-with-paver) i wrote while doing it
 
 
@@ -37,4 +34,3 @@ and to see what paver commands you can use:
 
 ```bash
 paver -h
-```

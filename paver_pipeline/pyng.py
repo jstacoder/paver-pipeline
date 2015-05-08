@@ -1,6 +1,11 @@
 from execjs import get
 import sys
 import os.path as op
+try:
+    from .rel import node_modules
+except ImportError:
+    from rel import node_modules
+
 
 rt = get('Node')
 
@@ -12,7 +17,9 @@ function seePath(){
 var ng = require('ng-annotate');
 function annotate(src,cfg){
     return ng(src,cfg);
-}''' % op.realpath(
+}''' % node_modules)
+
+'''op.realpath(
                 op.join(
                      op.dirname(
                          op.dirname(
@@ -22,6 +29,8 @@ function annotate(src,cfg){
                  )
          )
 )
+'''
+
 
 def ng_annotate(src,cfg=None):
     return context.call('annotate',src,cfg or dict(add=True)).get('src',None)
